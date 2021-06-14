@@ -30,7 +30,6 @@ class BarChartViewController: DemoBaseViewController {
         
         self.options = [.toggleValues,
                         .toggleHighlight,
-                        .toggleGradient,
                         .animateX,
                         .animateY,
                         .animateXY,
@@ -124,19 +123,18 @@ class BarChartViewController: DemoBaseViewController {
             }
         }
         
+        var set1: BarChartDataSet! = nil
         if let set = chartView.data?.dataSets.first as? BarChartDataSet {
-            setupBarGradient(set)
-            set.replaceEntries(yVals)
+            set1 = set
+            set1.replaceEntries(yVals)
             chartView.data?.notifyDataChanged()
             chartView.notifyDataSetChanged()
         } else {
-            let set = BarChartDataSet(entries: yVals, label: "The year 2017")
-            set.colors = ChartColorTemplates.material()
-            set.drawValuesEnabled = false
-
-            setupBarGradient(set)
-
-            let data = BarChartData(dataSet: set)
+            set1 = BarChartDataSet(entries: yVals, label: "The year 2017")
+            set1.colors = ChartColorTemplates.material()
+            set1.drawValuesEnabled = false
+            
+            let data = BarChartData(dataSet: set1)
             data.setValueFont(UIFont(name: "HelveticaNeue-Light", size: 10)!)
             data.barWidth = 0.9
             chartView.data = data
@@ -144,31 +142,9 @@ class BarChartViewController: DemoBaseViewController {
         
 //        chartView.setNeedsDisplay()
     }
-
-    private func setupBarGradient(_ dataSet: BarChartDataSet) {
-        if dataSet.drawBarGradientEnabled {
-            dataSet.colors = [.black, .red, .white]
-            dataSet.gradientPositions = [0, 40, 100]
-        } else {
-            dataSet.colors = ChartColorTemplates.material()
-            dataSet.gradientPositions = nil
-        }
-    }
     
     override func optionTapped(_ option: Option) {
-        switch option {
-        case .toggleGradient:
-
-            chartView.data?.dataSets
-                .compactMap { $0 as? BarChartDataSet }
-                .forEach { (set) in
-                    set.drawBarGradientEnabled = !set.drawBarGradientEnabled
-                    setupBarGradient(set)
-                }
-            chartView.setNeedsDisplay()
-        default:
-            super.handleOption(option, forChartView: chartView)
-        }
+        super.handleOption(option, forChartView: chartView)
     }
     
     // MARK: - Actions
